@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{ui.tours.title}">Travel Agency</title>
+    <div th:replace="~{fragments/head-links}"/>
+</head>
+<body>
+<div th:insert="~{fragments/header :: header}"></div>
+
+<div class="container mt-5">
+    <h1 th:text="#{ui.tours.header}">Available Tours</h1>
+
+    <form action="/" method="get" class="mb-3" sec:authorize="isAuthenticated()">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control"
+                       th:value="${search}"
+                       th:placeholder="#{ui.tours.filter.searchByTitle}" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="price" class="form-control"
+                       th:value="${filter.price}"
+                       th:placeholder="#{ui.tours.filter.minPrice}" min="0" />
+            </div>
+            <div class="col-md-2">
+                <select name="tourType" class="form-select">
+                    <option value="" th:text="#{ui.tours.filter.allTourTypes}">All Tour Types</option>
+                    <option th:each="type : ${tourTypes}"
+                            th:value="${type}"
+                            th:text="${#strings.capitalize(type.name().toLowerCase())}"
+                            th:selected="${filter.tourType == type.name()}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="transferType" class="form-select">
+                    <option value="" th:text="#{ui.tours.filter.allTransferTypes}">All Transfer Types</option>
+                    <option th:each="type : ${transferTypes}"
+                            th:value="${type}"
+                            th:text="${#strings.capitalize(type.name().toLowerCase().replace('_', ' '))}"
+                            th:selected="${filter.transferType == type.name()}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="hotelType" class="form-select">
+                    <option value="" th:text="#{ui.tours.filter.allHotelTypes}">All Hotel Types</option>
+                    <option th:each="type : ${hotelTypes}"
+                            th:value="${type}"
+                            th:text="${#strings.capitalize(type.name().toLowerCase().replace('_', ' '))}"
+                            th:selected="${filter.hotelType == type.name()}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100" th:text="#{ui.tours.filter.submit}">Search & Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tour List -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="tour : ${tours}">
+            <div class="card h-100" th:classappend="${tour.isHot} ? ' border border-danger'">
+                <div class="card-body position-relative">
+                    <span th:if="${tour.isHot}" class="position-absolute top-0 end-0 badge bg-danger m-2" th:text="#{ui.tours.hotBadge}">HOT</span>
+
+                    <h5 class="card-title" th:text="${tour.title}">Tour Title</h5>
+
+                    <p class="card-text" th:text="${tour.description}">Tour Description</p>
+
+                    <p class="card-text">
+                        <small class="text-muted" th:text="#{ui.tours.price} + ': '">
+                            Price:
+                        </small>
+                        <span th:text="${tour.price}">0.00</span>
+                    </p>
+
+                    <div sec:authorize="hasRole('USER')">
+                        <a th:href="@{/tour/{id}(id=${tour.id})}" class="btn btn-outline-primary" th:text="#{ui.tours.view}">View Tour</a>
+
+                        <form th:action="@{/tour/{id}/purchase(id=${tour.id})}" method="post" class="d-inline">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <button type="submit" class="btn btn-outline-success" th:text="#{ui.tours.buyNow}">Buy Now</button>
+                        </form>
+                    </div>
+
+                    <div sec:authorize="hasAnyRole('MANAGER', 'ADMIN')">
+                        <form th:action="@{/tour/{id}/make-hot(id=${tour.id})}" method="post" class="d-inline" th:if="${!tour.isHot}">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <button type="submit" class="btn btn-outline-danger" th:text="#{ui.tours.makeHot}">Make Hot</button>
+                        </form>
+                        <form th:action="@{/tour/{id}/remove-hot(id=${tour.id})}" method="post" class="d-inline" th:if="${tour.isHot}">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <button type="submit" class="btn btn-outline-secondary" th:text="#{ui.tours.removeHot}">Remove Hot</button>
+                        </form>
+                    </div>
+
+                    <!-- Admin Buttons -->
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/admin/tour/update/{id}(id=${tour.id})}" class="btn btn-outline-primary" th:text="#{ui.tours.update}">Update</a>
+
+                        <form th:action="@{/admin/tour/{id}/delete(id=${tour.id})}" method="post" class="d-inline">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <button type="submit" class="btn btn-outline-danger" th:text="#{ui.tours.delete}">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div th:if="${totalPages > 1}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/(page=${currentPage - 1})}" th:text="#{ui.pagination.previous}" aria-label="Previous">Previous</a>
+            </li>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+                <a class="page-link" th:href="@{/(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/(page=${currentPage + 1})}" th:text="#{ui.pagination.next}" aria-label="Next">Next</a>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="${totalPages == 0}" class="mt-4">
+        <p class="text-center text-muted" th:text="#{ui.tours.noToursFound}">No tours found.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

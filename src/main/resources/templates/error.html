@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="#{ui.error.page.error}">Error</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-5">
+  <h1 class="text-danger text-center" th:text="#{ui.error.page.somethingWentWrong}">Something went wrong</h1>
+  <table class="table table-bordered mt-3">
+    <tr>
+      <th th:text="#{ui.error.page.errorCode}">Error code</th>
+      <td th:text="${status}">?</td>
+    </tr>
+    <tr>
+      <th th:text="#{ui.error.page.errorTpe}">Error type</th>
+      <td th:text="${error}">?</td>
+    </tr>
+    <tr>
+      <th th:text="#{ui.error.page.message}">Message</th>
+      <td th:text="${message}">?</td>
+    </tr>
+    <tr>
+      <th th:text="#{ui.error.page.path}">Path</th>
+      <td th:text="${path}">?</td>
+    </tr>
+    <tr>
+      <th th:text="#{ui.error.page.time}">Time</th>
+      <td th:text="${timestamp}">?</td>
+    </tr>
+    <tr>
+      <th th:text="#{ui.error.page.errorClass}">Error class</th>
+      <td th:text="${exception}">?</td>
+    </tr>
+    <tr>
+      <th th:text="#{ui.error.page.reason}">Reason</th>
+      <td th:text="${cause}">?</td>
+    </tr>
+  </table>
+  <div class="text-center mt-4">
+    <a href="/" class="btn btn-primary" th:text="#{ui.error.page.backToHomePage}">Back to homepage</a>
+  </div>
+</div>
+</body>
+</html>

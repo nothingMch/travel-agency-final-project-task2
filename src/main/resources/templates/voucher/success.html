@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="#{ui.purchase.success.title}">Purchase Successful</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h1 class="text-success text-center" th:text="#{ui.purchase.success.header}">Purchase Successful!</h1>
+  <p class="text-center" th:text="#{ui.purchase.success.message}">Thank you for your purchase. Enjoy your tour!</p>
+  <div class="text-center mt-4">
+    <a href="/" class="btn btn-primary" th:text="#{ui.purchase.success.returnHome}">Return to Home</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{ui.auth.sign.up.registrationPage}">Registration Page</title>
+
+    <div th:replace="~{fragments/head-links}"/>
+
+</head>
+
+<div th:replace="~{fragments/header}"/>
+
+<body>
+<div class="container">
+    <h2 th:text="#{ui.auth.sign.up.registration}">Registration</h2>
+
+<!--    <div th:if="${errorMessage != null and #strings.isNotEmpty(errorMessage)}" class="alert alert-danger" th:text="${errorMessage}"></div>-->
+
+    <form th:action="@{/auth/registration}" th:object="${registrationRequest}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="form-group">
+            <label for="username" th:text="#{ui.auth.sign.up.username}">Username</label>
+            <input type="text" class="form-control" id="username" th:field="*{username}" th:placeholder="#{ui.auth.sign.up.enterUsername}" required>
+            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="password" th:text="#{ui.auth.sign.up.password}">Password</label>
+            <input type="password" class="form-control" id="password" th:field="*{password}" th:placeholder="#{ui.auth.sign.up.password}" required>
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="repeatedPassword" th:text="#{ui.auth.sign.up.repeatPassword}">Repeat Password</label>
+            <input type="password" class="form-control" id="repeatedPassword" th:field="*{repeatedPassword}" th:placeholder="#{ui.auth.sign.up.repeatPassword}" required>
+            <span th:if="${#fields.hasErrors('repeatedPassword')}" th:errors="*{repeatedPassword}" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="email" th:text="#{ui.auth.sign.up.email}">Email</label>
+            <input type="text" class="form-control" id="email" th:field="*{email}" th:placeholder="#{ui.auth.sign.up.enterEmail}" required>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber" th:text="#{ui.auth.sign.up.phoneNumber}">Phone number</label>
+            <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" th:placeholder="#{ui.auth.sign.up.enterPhoneNumber}">
+            <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary" th:text="#{ui.auth.sign.up.submit}">Submit</button>
+    </form>
+</div>
+</body>
+</html>
+
